@@ -1,7 +1,7 @@
 from collections import defaultdict,deque
-
+ 
 N,M = map(int,input().split())
-
+ 
 G = defaultdict(list)
 deg = [0 for _ in range(N)]
 for _ in range(M):
@@ -11,7 +11,7 @@ for _ in range(M):
     G[c].append(a)
     deg[a] += 1
     deg[c] += 1
-
+ 
 x,y = 0,0
 visited = [False for _ in range(N)]
 for i in range(N):
@@ -27,8 +27,8 @@ for i in range(N):
                 if not visited[v]:
                     Q.appendleft(v)
                     visited[v] = True
-
+ 
         if f:   x += 1
         else:   y += 1
-
+ 
 print(x,y)
