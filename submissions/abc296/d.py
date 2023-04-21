@@ -5,8 +5,8 @@ if N*N < M:
     exit()
 
 ans = N*N
-for a in range(1,int(max(N,M)**0.5)+2):
-    b = -(-M//a)
+for a in range(1,int(M**0.5)+2):
+    b = -(-M//a)    # “VˆäŠÖ”
     if 1 <= b <= N:
         ans = min(ans,a*b)
     
