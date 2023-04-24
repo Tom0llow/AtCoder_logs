@@ -5,14 +5,11 @@ A = list(map(int,input().split()))
 Q = int(input())
 B = [int(input()) for _ in range(Q)]
 
+
 A.sort()
-# print(A)
 for b in B:
-    i = bisect.bisect_left(A,b)
-    if 0 < i < N:   i -= 1
-    elif i == N:    i -= 2
-    
-    if N == 1:  ans = abs(b-A[i])
-    else:   ans = min(abs(b-A[i]), abs(b-A[i+1]))
+    l = bisect.bisect_left(A,b)
+    l = l if l < N else l-1
+    ans = min(abs(A[l]-b), abs(A[l-1]-b))
+
     print(ans)
- 
