@@ -1,176 +1,81 @@
 from collections import defaultdict
 
+
 class UnionFind():
-    """
-    Union Find木クラス
-
-    Attributes
-    --------------------
-    n : int
-        要素数
-    root : list
-        木の要素数
-        0未満であればそのノードが根であり、添字の値が要素数
-    rank : list
-        木の深さ
-    """
-
     def __init__(self, n):
-        """
-        Parameters
-        ---------------------
-        n : int
-            要素数
-        """
         self.n = n
-        self.root = [-1]*(n+1)
-        self.rank = [0]*(n+1)
+        self.parents = [-1] * n
 
     def find(self, x):
-        """
-        ノードxの根を見つける
-
-        Parameters
-        ---------------------
-        x : int
-            見つけるノード
-
-        Returns
-        ---------------------
-        root : int
-            根のノード
-        """
-        if(self.root[x] < 0):
+        if self.parents[x] < 0:
             return x
         else:
-            self.root[x] = self.find(self.root[x])
-            return self.root[x]
+            self.parents[x] = self.find(self.parents[x])
+            return self.parents[x]
 
-    def unite(self, x, y):
-        """
-        木の併合
-
-        Parameters
-        ---------------------
-        x : int
-            併合したノード
-        y : int
-            併合したノード
-        """
+    def union(self, x, y):
         x = self.find(x)
         y = self.find(y)
 
-        if(x == y):
+        if x == y:
             return
-        elif(self.rank[x] > self.rank[y]):
-            self.root[x] += self.root[y]
-            self.root[y] = x
-        else:
-            self.root[y] += self.root[x]
-            self.root[x] = y
-            if(self.rank[x] == self.rank[y]):
-                self.rank[y] += 1
 
-    def same(self, x, y):
-        """
-        同じグループに属するか判定
+        if self.parents[x] > self.parents[y]:
+            x, y = y, x
 
-        Parameters
-        ---------------------
-        x : int
-            判定したノード
-        y : int
-            判定したノード
-
-        Returns
-        ---------------------
-        ans : bool
-            同じグループに属しているか
-        """
-        return self.find(x) == self.find(y)
+        self.parents[x] += self.parents[y]
+        self.parents[y] = x
 
     def size(self, x):
-        """
-        木のサイズを計算
+        return -self.parents[self.find(x)]
 
-        Parameters
-        ---------------------
-        x : int
-            計算したい木のノード
+    def same(self, x, y):
+        return self.find(x) == self.find(y)
 
-        Returns
-        ---------------------
-        size : int
-            木のサイズ
-        """
-        return -self.root[self.find(x)]
+    def members(self, x):
+        root = self.find(x)
+        return [i for i in range(self.n) if self.find(i) == root]
 
     def roots(self):
-        """
-        根のノードを取得
+        return [i for i, x in enumerate(self.parents) if x < 0]
 
-        Returns
-        ---------------------
-        roots : list
-            根のノード
-        """
-        return [i for i, x in enumerate(self.root) if x < 0]
-
-    def group_size(self):
-        """
-        グループ数を取得
-
-        Returns
-        ---------------------
-        size : int
-            グループ数
-        """
+    def group_count(self):
         return len(self.roots())
 
-    def group_members(self):
-        """
-        全てのグループごとのノードを取得
-
-        Returns
-        ---------------------
-        group_members : defaultdict
-            根をキーとしたノードのリスト
-        """
+    def all_group_members(self):
         group_members = defaultdict(list)
         for member in range(self.n):
             group_members[self.find(member)].append(member)
         return group_members
-    
+
+
 
 H,W = map(int,input().split())
 Q = int(input())
+query = [list(map(int,input().split())) for _ in range(Q)]
 
-G = UnionFind(H*W+1)
-M = [-1] * (H*W+1)
-
-
-def check(n,x):
-    if M[x] == 1 and M[n] == 1:
-        G.unite(n,x)
-
-
-for _ in range(Q):
-    q = list(map(int,input().split()))
-    
+uf = UnionFind(H*W)
+G = [[0]*W for _ in range(H)]
+for q in query:
     if q[0] == 1:
         r,c = q[1:]
-        n = W*(r-1) + (c-1)
-        M[n] = 1
+        r,c = r-1,c-1
 
-        if n-W >= 0:                    check(n,n-W)    # ↑との関係
-        if n+W < H*W:                   check(n,n+W)    # ↓との関係 
-        if n%W != 0 and n-1 >= 0:       check(n,n-1)    # ←との関係
-        if (n+1)%W != 0 and n+1 < H*W:  check(n,n+1)    # →との関係
-            
+        G[r][c] = 1
+        d = [(-1,0), (0,1), (1,0), (0,-1)]
+        for i,j in d:
+            if (0 <= r+i < H) and (0 <= c+j < W) and G[r+i][c+j] == 1:
+                uf.union(W*r+c, W*(r+i)+(c+j))
+
     else:
-        ra,ca,rb,cb = q[1:] 
-        n1 = W*(ra-1) + ca-1
-        n2 = W*(rb-1) + cb-1
+        ra,ca,rb,cb = q[1:]
+        ra,ca,rb,cb = ra-1,ca-1,rb-1,cb-1
 
-        if G.same(n1,n2) and M[n1] == M[n2] == 1:   print('Yes')
-        else:   print('No')
+        if (ra,ca) == (rb,cb):
+            if G[ra][ca] == 1:  print('Yes')
+            else:   print('No')
+        else:
+            if uf.same(W*ra+ca, W*rb+cb):   print('Yes')
+            else:   print('No')
+
+    # print(*G, sep='\n')

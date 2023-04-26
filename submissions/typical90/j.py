@@ -1,21 +1,22 @@
-import itertools
-
 N = int(input())
-class1 = [0]*N
-class2 = [0]*N
+class1 = [0]*(N+1)
+class2 = [0]*(N+1)
 for i in range(N):
     C,P = map(int,input().split())
-    if C == 1:  class1[i] = P
-    else:   class2[i] = P
+    if C == 1:  class1[i+1] = P
+    else:   class2[i+1] = P
 
-t1 = [0]+list(itertools.accumulate(class1))
-t2 = [0]+list(itertools.accumulate(class2))
+for i in range(1,N+1):
+    class1[i] += class1[i-1]
+    class2[i] += class2[i-1]
 
+# print(class1)
+# print(class2)
 
 Q = int(input())
 for _ in range(Q):
     L,R = map(int,input().split())
-    A = t1[R] - t1[L-1] if len(t1) >= 2 else t1[0]
-    B = t2[R] - t2[L-1] if len(t2) >= 2 else t2[0]
-    print(A,B)
 
+    ans1 = class1[R] - class1[L-1]
+    ans2 = class2[R] - class2[L-1]
+    print(ans1, ans2)

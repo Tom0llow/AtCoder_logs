@@ -6,8 +6,7 @@ A.sort()
 B.sort()
 
 ans = 0
-for a,b in zip(A,B):
-    ans += abs(a-b)
+for i in range(N):
+    ans += abs(A[i] - B[i])
 
 print(ans)
-
