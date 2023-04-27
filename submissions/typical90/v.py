@@ -1,11 +1,12 @@
-import math
 import functools
+import math
+
+
+def my_gcd(*intergers):
+    return functools.reduce(math.gcd, intergers)
 
 A,B,C = map(int,input().split())
+x = my_gcd(A,B,C)
 
-def my_gcd(*integers):
-    return functools.reduce(math.gcd, integers)
-
-mgcd = my_gcd(A,B,C)
-ans = (A//mgcd)-1 + (B//mgcd)-1 + (C//mgcd)-1
+ans = (A//x-1) + (B//x-1) + (C//x-1)
 print(ans)
