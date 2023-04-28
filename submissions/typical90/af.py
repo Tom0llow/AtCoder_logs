@@ -1,31 +1,31 @@
-import itertools
-from collections import defaultdict
+from itertools import permutations
+
+INF = float('inf')
 
 N = int(input())
 A = [list(map(int,input().split())) for _ in range(N)]
+
 M = int(input())
-XY = defaultdict(list)
+kenaku = [[False]*(N+1) for _ in range(N+1)]
 for _ in range(M):
     X,Y = map(int,input().split())
-    XY[X].append(Y)
-    XY[Y].append(X)
+    kenaku[X][Y] = True
+    kenaku[Y][X] = True
 
 
-L = list(itertools.permutations(list(range(1,N+1))))
-INF = float('inf')
 ans = INF
-for l in L: 
-    flag = True
-    cnt = 0
-    for i in range(N-1):   
-        if l[i+1] in XY[l[i]]: 
+for permutation in permutations(range(1,N+1)):
+    flag = True    
+    time = 0
+    for i in range(N):    
+        if i < N-1 and kenaku[permutation[i]][permutation[i+1]]:  
             flag = False
             break
-        cnt += A[l[i]-1][i]    
-    cnt += A[l[-1]-1][-1]        
-    
-    if flag:
-        ans = min(ans,cnt)
 
-if ans == INF:  ans = -1
+        time += A[permutation[i]-1][i]    
+    
+    if flag:    ans = min(ans, time)
+
+
+ans = -1 if ans == INF else ans
 print(ans)

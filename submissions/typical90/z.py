@@ -1,33 +1,34 @@
 from collections import defaultdict
 import sys
-
 sys.setrecursionlimit(10**6)
 
 N = int(input())
 
-G = defaultdict(list)
-for _ in range(N-1):  
+tree = defaultdict(list)
+for _ in range(N-1):
     A,B = map(int,input().split())
-    G[A-1].append(B-1)
-    G[B-1].append(A-1)
+    tree[A-1].append(B-1)
+    tree[B-1].append(A-1)
 
 
-color = [-1]*N
-def dfs(G,v):
-    for v2 in G[v]:
-        if color[v2] != -1: continue
-        color[v2] = 1-color[v]
-        dfs(G,v2)
-        
+visited = [False]*N
+color_0 = []
+color_1 = []
 
-for v in range(N):
-    if color[v] != -1:  continue
-    color[v] = 1
-    dfs(G,v)
+def dfs(v, depth):
+    visited[v] = True
 
-# print(color)
-white_v = [v+1 for v in range(N) if color[v] == 1]
-black_v = [v+1 for v in range(N) if color[v] == 0]
+    if depth%2 == 0:    color_0.append(v+1) 
+    else:   color_1.append(v+1)
 
-ans = black_v if len(white_v) < len(black_v) else white_v
+    for next_v in tree[v]:
+        if visited[next_v]:    continue
+        dfs(next_v, depth+1)
+
+dfs(0,1)
+# print(colors)
+
+ans = color_1 if len(color_1) > len(color_0) else color_0
 print(*ans[:N//2])
+
+    

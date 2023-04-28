@@ -1,12 +1,16 @@
 N = int(input())
-S = [input() for _ in range(N)]
 
-DB = set()
-for i in range(N):
-    DBsize = len(DB) 
-    DB.add(S[i])
+users = set()
+ans = []
+for i in range(1,N+1):
+    length = len(users)
     
-    if DBsize < len(DB):
-        print(i+1)
+    s = input()
+    users.add(s)
+    
+    if len(users) > length:
+        ans.append(i)
 
-    
+    # print(users)
+
+print(*ans, sep='\n')
