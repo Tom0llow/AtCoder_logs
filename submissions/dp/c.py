@@ -1,23 +1,18 @@
 N = int(input())
-# DP 配列を用意する
-# 本問では i 日目の動作として「Aをやる」「Bをやる」「Cをやる」の3通りが考えられる
-# それぞれの行動をするための最大幸福度をそれぞれの漸化式で求める
-# i 日目に A、B、C をやるための最大幸福度は dp[i][0]、dp[i][1]、dp[i][2] とする
-dp = [[0]*3 for _ in range(N+1)]
+a,b,c = [0]*N,[0]*N,[0]*N
+for i in range(N):
+    a[i],b[i],c[i] = map(int,input().split())
+    
 
-# 初期条件を入力
-dp[0][0] = 0
-dp[0][1] = 0
-dp[0][2] = 0
+dp = [[0]*3 for _ in range(N)]
+dp[0][0] = a[0]
+dp[0][1] = b[0]
+dp[0][2] = c[0]
 
-for i in range(1, N+1):
-    a, b, c = map(int, input().split())
-    dp[i][0] = max(dp[i-1][1]+a, dp[i-1][2]+a)
-    dp[i][1] = max(dp[i-1][0]+b, dp[i-1][2]+b)
-    dp[i][2] = max(dp[i-1][0]+c, dp[i-1][1]+c)
+for i in range(1,N):
+    dp[i][0] = max(dp[i-1][1], dp[i-1][2])+a[i]
+    dp[i][1] = max(dp[i-1][0], dp[i-1][2])+b[i]
+    dp[i][2] = max(dp[i-1][0], dp[i-1][1])+c[i]
 
-# for d in dp:
-#     print(d)
-
-ans = max(dp[-1])
-print(ans)
+# print(*dp, sep='\n')
+print(max(dp[N-1]))
